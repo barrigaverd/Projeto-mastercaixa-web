@@ -2,12 +2,12 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
-from app.models import User
-from flask_login import login_manager
+
+from flask_login import LoginManager
 
 db = SQLAlchemy()
 migrate = Migrate()
-login = login_manager()
+login = LoginManager()
 
 def create_app(config_class=Config):
     # Cria a instância da aplicação Flask
@@ -21,6 +21,11 @@ def create_app(config_class=Config):
     login.init_app(app)
     login.login_view = 'main.login'
 
+    from app.models import User
+
+    @login.user_loader
+    def load_user(id):
+        return User.query.get(int(id))
     # --- Registro de Blueprints ---
     # Blueprints ajudam a organizar as rotas.
     # Vamos registrar nosso blueprint principal aqui.
@@ -29,9 +34,5 @@ def create_app(config_class=Config):
 
     # Retorna a instância da aplicação configurada
     return app
-
-@login.user_loader
-def loginuser(id):
-    usuario = User.query.get(int(id))
 
 from app import models
