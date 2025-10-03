@@ -17,10 +17,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Registrar')
 
     def validate_username(self, username):
-        # 1. Pega o dado que o usuário digitou no campo
-        #    A variável 'username' que o método recebe já é o objeto do campo
-        
-        # 2. Procura no banco de dados se já existe um usuário com esse nome
+
         user = User.query.filter_by(username=username.data).first()
         
         # 3. Se 'user' não for None, significa que encontrou um usuário.
@@ -29,10 +26,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Este nome de usuário já está em uso. Por favor, escolha outro.')
         
     def validate_email(self, email):
-        # 1. Pega o dado que o usuário digitou no campo
-        #    A variável 'email' que o método recebe já é o objeto do campo
-        
-        # 2. Procura no banco de dados se já existe um usuário com esse nome
+   
         user = User.query.filter_by(email=email.data).first()
         
         # 3. Se 'user' não for None, significa que encontrou um usuário.

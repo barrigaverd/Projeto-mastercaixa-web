@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import login_user, logout_user, current_user
-from app.forms import LoginForm
+from app.forms import LoginForm, RegistrationForm
 from app.models import User
+from app import db
 
 # Cria um Blueprint chamado 'main'. Blueprints são como
 # um conjunto de rotas que podem ser registradas na aplicação.
@@ -29,3 +30,19 @@ def login():
             return redirect(url_for('main.index'))
 
     return render_template("login.html", title='Entrar', form=form)
+
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User()
+        user.username = form.username.data
+        user.email = form.email.data
+        user.set_password(form.password.data)
+
+        db.session.add(user)
+        db.session.commit()
+        flash("Parabens, você foi registrado com sucesso!", "success")
+        return redirect(url_for('main.login'))
+
+    return render_template('register.html', title='Registrar', form=form)
